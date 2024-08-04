@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/utils/constants";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   projectName: z.string().min(1, "Project name is required"),
@@ -17,6 +19,8 @@ const formSchema = z.object({
 
 export function AddProject() {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,13 +33,36 @@ export function AddProject() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setLoading(true);
       console.log("values", values);
       const response = await axios.post(`${BASE_URL}/projects`, values);
-      console.log('response', response);
+      console.log("response", response);
+      if (response.status === 201) {
+        toast({
+          variant: "success",
+          title: "Success!",
+          description: "Project added successfully.",
+        });
+      } else {
+        toast({
+          variant: "success",
+          title: "Success!",
+          description: "Project added successfully.",
+        });
+      }
       setOpen(false);
       form.reset();
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error submitting form:", error);
+      toast({
+        title: "An error occurred",
+        description: "Unable to add project. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -94,7 +121,9 @@ export function AddProject() {
               )}
             />
             <DialogFooter>
-              <Button type="submit">Save Project</Button>
+              <Button type="submit" disabled={loading}>
+                Save Project
+              </Button>
             </DialogFooter>
           </form>
         </Form>
