@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Projects } from '@prisma/client';
 import { ZodError } from 'zod';
 import { createProjectSchema, TCreateProject } from '../schemas/projectsSchema';
 import { generateSlug } from "random-word-slugs";
@@ -30,6 +30,16 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
         });
 
         res.status(201).json(project);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const getProjects = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const projects = await prisma.projects.findMany();
+        res.status(200).json(projects);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
