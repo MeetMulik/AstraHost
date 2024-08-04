@@ -9,8 +9,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AddProject } from "./add-project";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function ProjectsTable() {
+  const router = useRouter();
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -18,7 +21,7 @@ export default function ProjectsTable() {
           <CardTitle>Projects</CardTitle>
           <CardDescription>Manage your projects and view their sales performance.</CardDescription>
         </div>
-        <AddProject/>
+        <AddProject />
       </CardHeader>
       <CardContent>
         <Table>
@@ -53,6 +56,9 @@ export default function ProjectsTable() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>
+                      <Link href={`/dashboard/projects/1`}>View Project</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Edit</DropdownMenuItem>
                     <DropdownMenuItem>Delete</DropdownMenuItem>
                   </DropdownMenuContent>
