@@ -10,6 +10,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/utils/constants";
 import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   projectName: z.string().min(1, "Project name is required"),
@@ -21,6 +22,7 @@ export function AddProject() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,6 +54,7 @@ export function AddProject() {
       }
       setOpen(false);
       form.reset();
+      router.refresh();
       setLoading(false);
     } catch (error) {
       setLoading(false);
