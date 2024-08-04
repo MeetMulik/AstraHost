@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { BASE_URL } from "@/utils/constants";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Project name is required"),
-  gitURL: z.string().url("Invalid Git URL"),
+  projectName: z.string().min(1, "Project name is required"),
+  githubUrl: z.string().url("Invalid Git URL"),
+  description: z.string().optional(),
 });
 
 export function AddProject() {
@@ -19,15 +21,17 @@ export function AddProject() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      gitURL: "",
+      projectName: "",
+      githubUrl: "",
+      description: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log("values", values);
-      await axios.post("http://localhost:9000/project", values);
+      const response = await axios.post(`${BASE_URL}/projects`, values);
+      console.log('response', response);
       setOpen(false);
       form.reset();
     } catch (error) {
@@ -49,7 +53,7 @@ export function AddProject() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="name"
+              name="projectName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Project Name</FormLabel>
@@ -63,7 +67,7 @@ export function AddProject() {
             />
             <FormField
               control={form.control}
-              name="gitURL"
+              name="githubUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Git URL</FormLabel>
@@ -71,6 +75,20 @@ export function AddProject() {
                     <Input placeholder="https://github.com/username/repo.git" {...field} />
                   </FormControl>
                   <FormDescription>Enter the Git URL of your project repository.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Description</FormLabel>
+                  <FormControl>
+                    <Input placeholder="A project about.." {...field} />
+                  </FormControl>
+                  <FormDescription>Enter some details about the project.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
