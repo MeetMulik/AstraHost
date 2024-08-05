@@ -1,34 +1,19 @@
 import { Request, Response } from 'express';
-import { PrismaClient, Projects } from '@prisma/client';
-import { ZodError } from 'zod';
-import { createProjectSchema, TCreateProject } from '../schemas/projectsSchema';
-import { generateSlug } from "random-word-slugs";
+import { createProjectSchema } from '../schemas/projectsSchema';
+import { ProjectService } from '../services/projectsService';
 
-
-const prisma = new PrismaClient();
+const projectService = new ProjectService();
 
 export const createProject = async (req: Request, res: Response): Promise<void> => {
     const validationResult = createProjectSchema.safeParse(req.body);
-
+    
     if (!validationResult.success) {
         res.status(400).json({ message: 'Invalid input', errors: validationResult.error.errors });
         return;
     }
-
+    
     try {
-        const data: TCreateProject = validationResult.data;
-        const subdomain = generateSlug();
-
-        const project = await prisma.projects.create({
-            data: {
-                projectName: data.projectName,
-                githubUrl: data.githubUrl,
-                subdomain,
-                customDomain: data.customDomain || null,
-                description: data.description || null,
-            },
-        });
-
+        const project = await projectService.createProject(validationResult.data);
         res.status(201).json(project);
     } catch (error) {
         console.error(error);
@@ -38,8 +23,26 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
 
 export const getProjects = async (req: Request, res: Response): Promise<void> => {
     try {
-        const projects = await prisma.projects.findMany();
+        const projects = await projectService.getAllProjects();
         res.status(200).json(projects);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const getProjectById = async (req: Request, res: Response): Promise<void> => {
+    const projectId = req.params.projectId;
+    
+    try {
+        const project = await projectService.getProjectById(projectId);
+        
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+        
+        res.status(200).json(project);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
