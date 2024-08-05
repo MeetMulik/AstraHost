@@ -1,12 +1,17 @@
 import { Router } from 'express';
 import { indexController } from '../controllers/indexController';
-import { createProject, getProjectById, getProjects } from '../controllers/projectsController';
+import { ProjectController } from '../controllers/projectsController';
+import { ProjectService } from '../services/projectsService';
 
 const router = Router();
 
+const projectService = new ProjectService();
+
+const projectController = new ProjectController(projectService);
+
 router.get('/', indexController);
-router.post('/projects', createProject);
-router.get('/projects', getProjects);
-router.get('/projects/:projectId', getProjectById);
+router.post('/projects', projectController.createProject);
+router.get('/projects', projectController.getProjects);
+router.get('/projects/:projectId', projectController.getProjectById);
 
 export default router;

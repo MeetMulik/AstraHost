@@ -1,50 +1,56 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { createProjectSchema } from '../schemas/projectsSchema';
 import { ProjectService } from '../services/projectsService';
 
-const projectService = new ProjectService();
+export class ProjectController {
+    private projectService: ProjectService;
 
-export const createProject = async (req: Request, res: Response): Promise<void> => {
-    const validationResult = createProjectSchema.safeParse(req.body);
-    
-    if (!validationResult.success) {
-        res.status(400).json({ message: 'Invalid input', errors: validationResult.error.errors });
-        return;
+    constructor(projectService: ProjectService) {
+        this.projectService = projectService;
     }
-    
-    try {
-        const project = await projectService.createProject(validationResult.data);
-        res.status(201).json(project);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};
 
-export const getProjects = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const projects = await projectService.getAllProjects();
-        res.status(200).json(projects);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};
+    createProject = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const validationResult = createProjectSchema.safeParse(req.body);
 
-export const getProjectById = async (req: Request, res: Response): Promise<void> => {
-    const projectId = req.params.projectId;
-    
-    try {
-        const project = await projectService.getProjectById(projectId);
-        
-        if (!project) {
-            res.status(404).json({ message: 'Project not found' });
+        if (!validationResult.success) {
+            res.status(400).json({ message: 'Invalid input', errors: validationResult.error.errors });
             return;
         }
-        
-        res.status(200).json(project);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+
+        try {
+            const project = await this.projectService.createProject(validationResult.data);
+            res.status(201).json(project);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
     }
-};
+
+    getProjects = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const projects = await this.projectService.getAllProjects();
+            res.status(200).json(projects);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    getProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const projectId = req.params.projectId;
+
+        try {
+            const project = await this.projectService.getProjectById(projectId);
+
+            if (!project) {
+                res.status(404).json({ message: 'Project not found' });
+                return;
+            }
+
+            res.status(200).json(project);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+}
