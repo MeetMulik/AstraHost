@@ -21,3 +21,13 @@ export async function getProjects(): Promise<Project[]> {
         return [];
     }
 }
+
+export async function getProjectById(projectId: string): Promise<Project | null> {
+    try {
+        const response = await axios.get<Project>(`${BASE_URL}/projects/${projectId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching project by ID:", error);
+        return null;
+    }
+}
