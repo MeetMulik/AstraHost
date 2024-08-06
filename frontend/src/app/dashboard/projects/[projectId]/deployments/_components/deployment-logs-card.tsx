@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoveHorizontalIcon } from "lucide-react";
+import { EllipsisIcon, MoveHorizontalIcon, GithubIcon, EllipsisVerticalIcon } from "lucide-react";
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
-type Props = {};
+type Props = {
+  projectId: string;
+};
 
 const DeploymentLogsCard = (props: Props) => {
   return (
@@ -35,6 +38,7 @@ const DeploymentLogsCard = (props: Props) => {
               <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Description</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -44,6 +48,18 @@ const DeploymentLogsCard = (props: Props) => {
                 <Badge variant="secondary">Successful</Badge>
               </TableCell>
               <TableCell>Deployed new feature update</TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <EllipsisIcon className=" h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Link href={`/dashboard/projects/${props.projectId}/deployments/1`}>View Details</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>2023-04-28 3:15 PM</TableCell>
