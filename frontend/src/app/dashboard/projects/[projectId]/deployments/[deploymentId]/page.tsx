@@ -1,5 +1,7 @@
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Link from "next/link";
+import { FrameIcon, Logs } from "lucide-react";
 
 type Props = {
   params: {
@@ -37,24 +39,40 @@ const BuildLogs = () => {
   ];
 
   return (
-    <ScrollArea className="h-[400px] w-full rounded-md border p-4">
-      <div className="space-y-2">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Build Logs</h2>
-          <div className="flex space-x-2">
-            <span className="px-2 py-1 bg-foreground rounded-full text-xs text-background">All Logs (56)</span>
-            <span className="px-2 py-1 bg-foreground rounded-full text-xs text-background">Errors (0)</span>
-            <span className="px-2 py-1 bg-foreground rounded-full text-xs text-background">Warnings (0)</span>
+    <div className="flex flex-col items-start justify-center space-y-3">
+      <div className="flex justify-between items-start flex-col ">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background sm:static sm:h-auto sm:border-0 sm:bg-transparent">
+          <div className="flex items-center gap-4">
+            <Link
+              href="#"
+              className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+              prefetch={false}
+            >
+              <Logs className="h-4 w-4 transition-all group-hover:scale-110" />
+              <span className="sr-only">AstraHost</span>
+            </Link>
+            <h1 className="text-xl font-bold">Build Logs</h1>
           </div>
-        </div>
-        {logs.map((log, index) => (
-          <div key={index} className="flex">
-            <span className="text-foreground mr-4">{log.time}</span>
-            <span>{log.message}</span>
-          </div>
-        ))}
+        </header>
       </div>
-    </ScrollArea>
+      <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+        <div className="space-y-2">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex space-x-2">
+              <span className="px-2 py-1 bg-foreground rounded-full text-xs text-background">All Logs (56)</span>
+              <span className="px-2 py-1 bg-foreground rounded-full text-xs text-background">Errors (0)</span>
+              <span className="px-2 py-1 bg-foreground rounded-full text-xs text-background">Warnings (0)</span>
+            </div>
+          </div>
+          {logs.map((log, index) => (
+            <div key={index} className="flex">
+              <span className="text-foreground mr-4">{log.time}</span>
+              <span>{log.message}</span>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
 
