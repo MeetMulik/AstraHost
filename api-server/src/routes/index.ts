@@ -13,5 +13,6 @@ router.get('/', indexController);
 router.post('/projects', projectController.createProject);
 router.get('/projects', projectController.getProjects);
 router.get('/projects/:projectId', projectController.getProjectById);
+router.delete('/projects/:projectId', projectController.deleteProjectById);
 
 export default router;

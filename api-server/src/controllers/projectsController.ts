@@ -18,7 +18,7 @@ export class ProjectController {
         }
 
         try {
-            const project = await this.projectService.createProject(validationResult.data);
+            const project = await this.projectService.createProjectService(validationResult.data);
             res.status(201).json(project);
         } catch (error) {
             console.error(error);
@@ -28,7 +28,7 @@ export class ProjectController {
 
     getProjects = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const projects = await this.projectService.getAllProjects();
+            const projects = await this.projectService.getAllProjectsService();
             res.status(200).json(projects);
         } catch (error) {
             console.error(error);
@@ -40,7 +40,7 @@ export class ProjectController {
         const projectId = req.params.projectId;
 
         try {
-            const project = await this.projectService.getProjectById(projectId);
+            const project = await this.projectService.getProjectByIdService(projectId);
 
             if (!project) {
                 res.status(404).json({ message: 'Project not found' });
@@ -48,6 +48,24 @@ export class ProjectController {
             }
 
             res.status(200).json(project);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    deleteProjectById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const projectId = req.params.projectId;
+
+        try {
+            const project = await this.projectService.deleteProjectByIdService(projectId);
+
+            if (!project) {
+                res.status(404).json({ message: 'Project not found' });
+                return;
+            }
+
+            res.status(204).end();
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });

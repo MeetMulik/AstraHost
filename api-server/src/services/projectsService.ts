@@ -5,7 +5,7 @@ import { generateSlug } from "random-word-slugs";
 const prisma = new PrismaClient();
 
 export class ProjectService {
-    async createProject(data: TCreateProject): Promise<Projects> {
+    async createProjectService(data: TCreateProject): Promise<Projects> {
         const subdomain = generateSlug();
         return await prisma.projects.create({
             data: {
@@ -18,14 +18,20 @@ export class ProjectService {
         });
     }
 
-    async getAllProjects(): Promise<Projects[]> {
+    async getAllProjectsService(): Promise<Projects[]> {
         return await prisma.projects.findMany();
     }
 
-    async getProjectById(projectId: string): Promise<Projects | null> {
+    async getProjectByIdService(projectId: string): Promise<Projects | null> {
         return await prisma.projects.findUnique({
             where: { projectId },
             include: { Deployments: true }
+        });
+    }
+
+    async deleteProjectByIdService(projectId: string): Promise<Projects | null> {
+        return await prisma.projects.delete({
+            where: { projectId },
         });
     }
 }
