@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowUpRight, ChevronDown, EllipsisIcon, GithubIcon } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 type Props = {
@@ -56,7 +57,9 @@ const page = async ({ params }: Props) => {
         </div>
         <div className="hidden md:flex space-x-4">
           <Button variant="outline">Build Logs</Button>
-          <Button variant="outline">View Previous Deployments</Button>
+          <Button variant="outline">
+            <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
+          </Button>
           <Button variant="outline">Redeploy</Button>
         </div>
         <div className="md:hidden">
@@ -68,7 +71,9 @@ const page = async ({ params }: Props) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>Build Logs</DropdownMenuItem>
-              <DropdownMenuItem>View Previous Deployments</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>Redeploy</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
