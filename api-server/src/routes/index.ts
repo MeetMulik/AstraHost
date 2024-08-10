@@ -1,18 +1,12 @@
 import { Router } from 'express';
 import { indexController } from '../controllers/indexController';
-import { ProjectController } from '../controllers/projectsController';
-import { ProjectService } from '../services/projectsService';
+import projectsRouter from './projectsRouter';
+import deploymentRouter from './deploymentRouter';
 
 const router = Router();
 
-const projectService = new ProjectService();
-
-const projectController = new ProjectController(projectService);
-
 router.get('/', indexController);
-router.post('/projects', projectController.createProject);
-router.get('/projects', projectController.getProjects);
-router.get('/projects/:projectId', projectController.getProjectById);
-router.delete('/projects/:projectId', projectController.deleteProjectById);
+router.use('/projects', projectsRouter);
+router.use('/deploy', deploymentRouter);
 
 export default router;
