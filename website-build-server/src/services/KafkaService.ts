@@ -2,6 +2,7 @@ import { Kafka, Producer, SASLOptions } from 'kafkajs';
 import * as fs from 'fs';
 import config from '../config';
 import logger from '../utils/logger';
+import path from 'path';
 
 class KafkaService {
     private static instance: KafkaService;
@@ -14,12 +15,12 @@ class KafkaService {
             username: config.KAFKA.SASL.USERNAME,
             password: config.KAFKA.SASL.PASSWORD
         };
-
+        
         this.kafka = new Kafka({
             clientId: `docker-build-server-${config.DEPLOYMENT_ID}`,
             brokers: config.KAFKA.BROKERS,
             ssl: {
-                ca: [fs.readFileSync(config.KAFKA.SSL_CERT_PATH, 'utf-8')],
+                ca: [fs.readFileSync(path.join(__dirname, 'kafka.pem'), 'utf-8')],
             },
             sasl: saslOptions
         });
@@ -49,7 +50,7 @@ class KafkaService {
             topic: 'container-logs',
             messages: [
                 {
-                    key: log,
+                    key: "log",
                     value: JSON.stringify({
                         PROJECT_ID: config.PROJECT_ID,
                         DEPLOYMENT_ID: config.DEPLOYMENT_ID,
