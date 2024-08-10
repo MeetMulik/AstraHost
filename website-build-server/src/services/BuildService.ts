@@ -7,7 +7,11 @@ class BuildService {
         const kafkaService = KafkaService.getInstance();
 
         return new Promise<void>((resolve, reject) => {
-            const p = exec(`cd ${outDirPath} && npm install && npm run build`);
+            const p = exec(`
+                cd ${outDirPath} && 
+                npm install &&
+                npm run build
+            `);
 
             p.stdout?.on('data', async (data: Buffer | string) => {
                 const logMessage = data.toString().trim();
