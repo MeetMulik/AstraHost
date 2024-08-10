@@ -28,7 +28,7 @@ async function init(): Promise<void> {
         logger.info('Executing build script');
         await KafkaService.getInstance().publishLog('Executing build script');
 
-        const outDirPath = path.join(__dirname, 'output');
+        const outDirPath = path.join(path.dirname(__dirname), 'output');
         logger.info(`Output directory: ${outDirPath}`);
 
         await BuildService.runBuildProcess(outDirPath);
