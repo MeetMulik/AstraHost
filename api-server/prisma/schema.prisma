@@ -34,11 +34,12 @@ enum DeploymentStatus {
 }
 
 model Deployments {
-  deploymentId    String           @id @default(cuid())
-  projectId       String
-  project         Projects         @relation(fields: [projectId], references: [projectId])
-  deploymentUrl   String?          @map("deployment_url")
-  deplymentStatus DeploymentStatus @default(NOT_STARTED) @map("deployment_status")
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  deploymentId          String           @id @default(cuid())
+  deploymentDescription String?          @map("deployment_description")
+  projectId             String
+  project               Projects         @relation(fields: [projectId], references: [projectId])
+  deploymentUrl         String?          @map("deployment_url")
+  deplymentStatus       DeploymentStatus @default(NOT_STARTED) @map("deployment_status")
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 }
