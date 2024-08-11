@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-ecs": "^3.624.0",
     "@clickhouse/client": "^1.4.1",
     "@prisma/client": "^5.17.0",
     "cors": "^2.8.5",
