@@ -4,7 +4,7 @@ import logger from '../utils/logger';
 
 export class ClickHouseService {
     private static instance: ClickHouseService;
-    private client: ClickHouseClient;
+    public client: ClickHouseClient;
 
     private constructor() {
         this.client = createClient({
