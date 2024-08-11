@@ -4,6 +4,8 @@ import indexRouter from './routes/index';
 import errorHandler from './middlewares/errorHandler';
 import logger from './utils/logger';
 import cors from 'cors';
+import { KafkaService } from './clients/KafkaClient';
+import { ClickHouseService } from './clients/ClickHouseClient';
 
 dotenv.config();
 
@@ -15,6 +17,14 @@ app.use((req, res, next) => {
     logger.info(`${req.method} ${req.url}`);
     next();
 });
+
+const kafkaService = KafkaService.getInstance();
+const clickHouseService = ClickHouseService.getInstance();
+
+app.set('kafkaService', kafkaService);
+app.set('clickHouseService', clickHouseService);
+
+
 app.use('/', indexRouter);
 app.use(errorHandler);
 
