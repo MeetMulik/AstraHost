@@ -1,17 +1,21 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { EllipsisIcon, MoveHorizontalIcon, GithubIcon, EllipsisVerticalIcon } from "lucide-react";
-import React from "react";
+import { MoveHorizontalIcon, EllipsisIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { Deployment } from "@/types/deployment";
+import { format } from "date-fns";
+
+
 
 type Props = {
-  projectId: string;
+  deployments: Deployment[];
 };
 
-const DeploymentLogsCard = (props: Props) => {
+const DeploymentLogsCard = ({ deployments }: Props) => {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="bg-muted/50 px-6 py-4">
@@ -42,53 +46,35 @@ const DeploymentLogsCard = (props: Props) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>2023-05-01 10:30 AM</TableCell>
-              <TableCell>
-                <Badge variant="secondary">Successful</Badge>
-              </TableCell>
-              <TableCell>Deployed new feature update</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <EllipsisIcon className=" h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      <Link href={`/dashboard/projects/${props.projectId}/deployments/1`}>View Details</Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2023-04-28 3:15 PM</TableCell>
-              <TableCell>
-                <Badge variant="outline">Failed</Badge>
-              </TableCell>
-              <TableCell>Deployment script failed to execute</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2023-04-25 9:00 AM</TableCell>
-              <TableCell>
-                <Badge variant="secondary">Successful</Badge>
-              </TableCell>
-              <TableCell>Deployed security patch</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2023-04-22 11:45 AM</TableCell>
-              <TableCell>
-                <Badge variant="secondary">Successful</Badge>
-              </TableCell>
-              <TableCell>Deployed bug fixes</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>2023-04-18 2:00 PM</TableCell>
-              <TableCell>
-                <Badge variant="outline">Failed</Badge>
-              </TableCell>
-              <TableCell>Deployment timed out</TableCell>
-            </TableRow>
+            {deployments.length > 0 ? (
+              deployments.map((deployment) => (
+                <TableRow key={deployment.deploymentId}>
+                  <TableCell>{format(new Date(deployment.createdAt), "PPpp")}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">{deployment.deploymentStatus}</Badge>
+                  </TableCell>
+                  <TableCell>{deployment.deploymentDescription || "No description"}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <EllipsisIcon className=" h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <Link href={`/dashboard/projects/${deployment.projectId}/deployments/${deployment.deploymentId}`}>
+                            View Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4}>No deployment logs available.</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>
