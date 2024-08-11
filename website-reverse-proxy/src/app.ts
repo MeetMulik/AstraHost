@@ -1,13 +1,12 @@
 import express from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
 import errorHandler from './utils/errorHandler';
+import dotenv from 'dotenv';
+import proxyMiddleware from './middleware/proxyMiddleware';
+dotenv.config();
 
 const app = express();
 
-app.use(helmet());
-app.use(morgan('combined'));
-
+app.use(proxyMiddleware);
 
 app.use(errorHandler);
 
