@@ -18,7 +18,10 @@ export class LogsService {
     async getLogsByDeploymentId(deploymentId: string): Promise<Logs[]> {
         try {
             const result = await this.clickHouseService.client.query({
-                query: `SELECT event_id, deployment_id, log, timestamp FROM log_events WHERE deployment_id = {deployment_id:String}`,
+                query: `SELECT event_id, deployment_id, log, timestamp 
+                        FROM log_events 
+                        WHERE deployment_id = {deployment_id:String} 
+                        ORDER BY timestamp ASC`,
                 query_params: {
                     deployment_id: deploymentId
                 },
