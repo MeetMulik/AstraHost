@@ -8,11 +8,11 @@ async function startServer() {
     try {
         const logProcessor: LogProcessor = app.get('logProcessor');
 
-        await logProcessor.start();
-
         const server = app.listen(port, () => {
             logger.info(`Server is running at http://localhost:${port}`);
         });
+
+        await logProcessor.start();
 
         process.on('SIGTERM', async () => {
             logger.info('SIGTERM signal received: closing HTTP server');
