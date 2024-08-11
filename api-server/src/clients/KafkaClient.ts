@@ -6,7 +6,6 @@ import path from "path";
 export class KafkaService {
     private static instance: KafkaService;
     private kafka: Kafka;
-    private consumer: Consumer;
 
     private constructor() {
         const saslOptions: SASLOptions = {
@@ -24,8 +23,6 @@ export class KafkaService {
             },
             sasl: saslOptions
         });
-
-        this.consumer = this.kafka.consumer({ groupId: "api-server-logs-consumer" });
     }
 
     public static getInstance(): KafkaService {
@@ -35,7 +32,7 @@ export class KafkaService {
         return KafkaService.instance;
     }
 
-    public getConsumer(): Consumer {
-        return this.consumer;
+    public createConsumer(groupId: string): Consumer {
+        return this.kafka.consumer({ groupId });
     }
 }
