@@ -1,0 +1,31 @@
+{
+  "name": "website-reverse-proxy",
+  "version": "1.0.0",
+  "description": "Reverse proxy for the AstraHost Project",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.2.0",
+    "prisma": "^5.18.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2",
+    "winston": "^3.14.1"
+  }
+}
