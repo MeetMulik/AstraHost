@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ArrowUpRight, ChevronDown, EllipsisIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { formatDistanceToNow } from 'date-fns';
 
 type Props = {
   params: {
@@ -18,6 +19,9 @@ const page = async ({ params }: Props) => {
   const project = await getProjectById(params.projectId);
   const latestDeployment = await getLatestDeployment(params.projectId);
   console.log('latestDeployment', latestDeployment);
+
+  const updatedAt = latestDeployment?.updatedAt;
+  const timeAgo = updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : 'Unknown time';
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -135,16 +139,13 @@ const page = async ({ params }: Props) => {
                 <div className="mt-2 flex items-center">
                   <span className="bg-green-500 rounded-full h-2 w-2 mr-2"></span>
                   <span className="text-sm font-semibold">{latestDeployment.deploymentStatus}</span>
-                  <span className="text-sm text-foreground/60 ml-2">96d ago by MeetMulik</span>
+                  <span className="text-sm text-foreground/60 ml-2">{`${timeAgo} by Name`}</span>
                 </div>
               ) : (
                 <p className="mt-2 text-sm text-foreground/60">No deployment status available</p>
               )}
 
-              <h4 className="text-sm font-semibold mt-4 mb-1">Source</h4>
-              {/* <p className="text-sm">main</p>
-              <p className="text-sm">b149a89 feat: next-image setup</p> */}
-              <p className="text-sm">main</p>
+              <h4 className="text-sm font-semibold mt-4 mb-1">Description</h4>
               <p className="text-sm">{latestDeployment?.deploymentDescription}</p>
             </div>
           </div>
