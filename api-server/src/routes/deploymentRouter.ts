@@ -9,6 +9,7 @@ const deploymentController = new DeploymentController(deploymentService);
 deploymentRouter.post('/', deploymentController.deployProject);
 deploymentRouter.get('/:deploymentId/status', deploymentController.getDeploymentStatus);
 deploymentRouter.get('/history/:projectId', deploymentController.getDeploymentHistory);
+deploymentRouter.get('/:projectId/latest', deploymentController.getLatestDeployment);
 deploymentRouter.patch('/:deploymentId/status', deploymentController.updateDeploymentStatus);
 
 export default deploymentRouter;

@@ -77,4 +77,28 @@ export class DeploymentController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+
+    getLatestDeployment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const { projectId } = req.params;
+    
+        try {
+            const latestDeployment = await this.deploymentService.getLatestDeploymentService(projectId);
+            if (!latestDeployment) {
+                res.status(200).json({
+                    message: 'No deployments found for this project',
+                    data: null
+                });
+            } else {
+                res.status(200).json({
+                    message: 'Deployment found',
+                    data: latestDeployment
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching latest deployment:', error);
+            res.status(500).json({
+                message: 'Internal server error',
+            });
+        }
+    }
 }

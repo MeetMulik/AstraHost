@@ -98,4 +98,13 @@ export class DeploymentService {
             data: { deploymentStatus: status },
         });
     }
+
+    async getLatestDeploymentService(projectId: string): Promise<Deployments | null> {
+        return await prisma.deployments.findFirst({
+            where: { projectId },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+    }
 }

@@ -1,4 +1,6 @@
+import { getLatestDeployment } from "@/actions/deployment-actions";
 import { getProjectById } from "@/actions/project-actions";
+import { DeployButton } from "@/components/shared/deploy-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -14,6 +16,8 @@ type Props = {
 
 const page = async ({ params }: Props) => {
   const project = await getProjectById(params.projectId);
+  const latestDeployment = await getLatestDeployment(params.projectId);
+  console.log('latestDeployment', latestDeployment);
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -22,14 +26,25 @@ const page = async ({ params }: Props) => {
           <h1 className="text-lg font-semibold md:text-3xl text-foreground">{`${project?.projectName}`}</h1>
         </div>
         <div className="hidden items-center space-x-2 md:flex">
-          <Button variant="secondary">
-            <GithubIcon className="h-4 w-4 mr-2" />
-            Repository
-          </Button>
-          <Button variant="default">
-            <ArrowUpRight className="h-4 w-4 mr-2" />
-            Visit
-          </Button>
+          <Link href={project!.githubUrl}>
+            <Button variant="secondary">
+              <GithubIcon className="h-4 w-4 ml-1" />
+              Repository
+            </Button>
+          </Link>
+          {latestDeployment ? (
+            <Link href={`http://${project?.subdomain}.localhost:8000`}>
+              <Button variant="default">
+                <ArrowUpRight className="h-4 w-4 mr-2" />
+                Visit
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="default" disabled>
+              <ArrowUpRight className="h-4 w-4 mr-2" />
+              Visit
+            </Button>
+          )}
         </div>
         <div className="md:hidden">
           <DropdownMenu>
@@ -37,14 +52,25 @@ const page = async ({ params }: Props) => {
               <EllipsisIcon className=" h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
-                Repository
-                <GithubIcon className="h-4 w-4 ml-1" />
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                Visit
-                <ArrowUpRight className="h-4 w-4 ml-1" />
-              </DropdownMenuItem>
+              <Link href={project!.githubUrl}>
+                <DropdownMenuItem>
+                  Repository
+                  <GithubIcon className="h-4 w-4 ml-1" />
+                </DropdownMenuItem>
+              </Link>
+              {latestDeployment ? (
+                <Link href={`http://${project?.subdomain}.localhost:8000`} passHref>
+                  <DropdownMenuItem>
+                    Visit
+                    <ArrowUpRight className="h-4 w-4 ml-1" />
+                  </DropdownMenuItem>
+                </Link>
+              ) : (
+                <DropdownMenuItem disabled>
+                  Visit
+                  <ArrowUpRight className="h-4 w-4 ml-1" />
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -60,7 +86,7 @@ const page = async ({ params }: Props) => {
           <Button variant="outline">
             <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
           </Button>
-          <Button variant="outline">Redeploy</Button>
+          <DeployButton latestDeployment={latestDeployment} projectId={params.projectId} />
         </div>
         <div className="md:hidden">
           <DropdownMenu>
@@ -74,7 +100,7 @@ const page = async ({ params }: Props) => {
               <DropdownMenuItem>
                 <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>Redeploy</DropdownMenuItem>
+              <DropdownMenuItem>{latestDeployment ? "Redeploy" : "Deploy"}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -92,21 +118,34 @@ const page = async ({ params }: Props) => {
               <p className="text-sm mb-2">{project?.projectName || "image-gallery-e7d9kqkcs-meetmuliks-projects.vercel.app"}</p>
 
               <h4 className="text-sm font-semibold mt-4 mb-2">Domains</h4>
-              <p className="text-sm flex items-center">
-                {project?.subdomain || "image-gallery-teal-eight.vercel.app"}
-                <ArrowUpRight className="h-4 w-4 ml-2" />
-                <span className="ml-2 text-foreground/60">+2</span>
-              </p>
+              {latestDeployment ? (
+                <Link href={`http://${project?.subdomain}.localhost:8000`}>
+                  <p className="text-sm flex items-center">
+                    {project?.subdomain || ""}
+                    <ArrowUpRight className="h-4 w-4 ml-2" />
+                    <span className="ml-2 text-foreground/60">+2</span>
+                  </p>
+                </Link>
+              ) : (
+                <p className="text-sm text-foreground/60">Project not yet deployed</p>
+              )}
 
-              <div className="mt-4 flex items-center">
-                <span className="bg-green-500 rounded-full h-2 w-2 mr-2"></span>
-                <span className="text-sm font-semibold">Ready</span>
-                <span className="text-sm text-foreground/60 ml-2">96d ago by MeetMulik</span>
-              </div>
+              <h4 className="text-sm font-semibold mt-4">Deployment Status</h4>
+              {latestDeployment ? (
+                <div className="mt-2 flex items-center">
+                  <span className="bg-green-500 rounded-full h-2 w-2 mr-2"></span>
+                  <span className="text-sm font-semibold">{latestDeployment.deploymentStatus}</span>
+                  <span className="text-sm text-foreground/60 ml-2">96d ago by MeetMulik</span>
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-foreground/60">No deployment status available</p>
+              )}
 
-              <h4 className="text-sm font-semibold mt-4 mb-2">Source</h4>
+              <h4 className="text-sm font-semibold mt-4 mb-1">Source</h4>
+              {/* <p className="text-sm">main</p>
+              <p className="text-sm">b149a89 feat: next-image setup</p> */}
               <p className="text-sm">main</p>
-              <p className="text-sm">b149a89 feat: next-image setup</p>
+              <p className="text-sm">{latestDeployment?.deploymentDescription}</p>
             </div>
           </div>
         </CardContent>
