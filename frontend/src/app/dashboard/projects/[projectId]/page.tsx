@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowUpRight, ChevronDown, EllipsisIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { formatDistanceToNow } from 'date-fns';
+import React, { Suspense } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 type Props = {
   params: {
@@ -18,10 +18,9 @@ type Props = {
 const page = async ({ params }: Props) => {
   const project = await getProjectById(params.projectId);
   const latestDeployment = await getLatestDeployment(params.projectId);
-  console.log('latestDeployment', latestDeployment);
 
   const updatedAt = latestDeployment?.updatedAt;
-  const timeAgo = updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : 'Unknown time';
+  const timeAgo = updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : "Unknown time";
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -86,9 +85,15 @@ const page = async ({ params }: Props) => {
           <p className="text-sm text-foreground/60">The deployment that is available to your visitors.</p>
         </div>
         <div className="hidden md:flex space-x-4">
-          <Button variant="outline">Build Logs</Button>
           <Button variant="outline">
-            <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
+            <Link href={`/dashboard/projects/${params.projectId}/deployments/${latestDeployment?.deploymentId}`}>
+              Build Logs
+            </Link>
+          </Button>
+          <Button variant="outline">
+            <Suspense fallback={<h1>Fetching data...</h1>}>
+              <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
+            </Suspense>
           </Button>
           <DeployButton latestDeployment={latestDeployment} projectId={params.projectId} />
         </div>
@@ -125,7 +130,7 @@ const page = async ({ params }: Props) => {
               {latestDeployment ? (
                 <Link href={`http://${project?.subdomain}.localhost:8000`}>
                   <p className="text-sm flex items-center">
-                    {project?.subdomain || ""}
+                    <span className="border-b-2 border-white">{project?.subdomain || ""}</span>
                     <ArrowUpRight className="h-4 w-4 ml-2" />
                     <span className="ml-2 text-foreground/60">+2</span>
                   </p>

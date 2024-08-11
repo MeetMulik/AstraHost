@@ -1,6 +1,6 @@
 import { FrameIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import DeploymentLogsCard from "./_components/deployment-logs-card";
 import DeploymentStatsCard from "./_components/deployment-stats-card";
 import DeploymentTimelineCard from "./_components/deployment-timeline-card";
@@ -12,14 +12,27 @@ type Props = {
   };
 };
 
-const page = async ({ params }: Props) => {
-
-  const result = await getDeploymentHistory(params.projectId);
+const DeploymentData = async ({ projectId }: { projectId: string }) => {
+  const result = await getDeploymentHistory(projectId);
   const deployments = result?.deployments || [];
 
   return (
+    <>
+      <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+        <DeploymentLogsCard deployments={deployments} />
+      </div>
+      <div className="grid gap-4">
+        <DeploymentStatsCard deployments={deployments} />
+        <DeploymentTimelineCard deployments={deployments} />
+      </div>
+    </>
+  );
+};
+
+const Page = ({ params }: Props) => {
+  return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex justify-between items-start flex-col ">
+      <div className="flex justify-between items-start flex-col">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <div className="flex items-center gap-4">
             <Link
@@ -37,14 +50,9 @@ const page = async ({ params }: Props) => {
       <div>
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-0 justify-center items-center">
           <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-            <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
-              {/* <DeploymentLogsCard projectId={params.projectId}/> */}
-              <DeploymentLogsCard deployments={deployments} />
-            </div>
-            <div className="grid gap-4">
-              <DeploymentStatsCard deployments={deployments} />
-              <DeploymentTimelineCard deployments={deployments} />
-            </div>
+            <Suspense fallback={<div>Loading deployment data...</div>}>
+              <DeploymentData projectId={params.projectId} />
+            </Suspense>
           </main>
         </div>
       </div>
@@ -52,4 +60,4 @@ const page = async ({ params }: Props) => {
   );
 };
 
-export default page;
+export default Page;
