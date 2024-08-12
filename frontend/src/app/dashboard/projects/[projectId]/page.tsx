@@ -8,6 +8,7 @@ import { ArrowUpRight, ChevronDown, EllipsisIcon, GithubIcon } from "lucide-reac
 import Link from "next/link";
 import React, { Suspense } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 type Props = {
   params: {
@@ -86,9 +87,7 @@ const page = async ({ params }: Props) => {
         </div>
         <div className="hidden md:flex space-x-4">
           <Button variant="outline">
-            <Link href={`/dashboard/projects/${params.projectId}/deployments/${latestDeployment?.deploymentId}`}>
-              Build Logs
-            </Link>
+            <Link href={`/dashboard/projects/${params.projectId}/deployments/${latestDeployment?.deploymentId}`}>Build Logs</Link>
           </Button>
           <Button variant="outline">
             <Suspense fallback={<h1>Fetching data...</h1>}>
@@ -118,9 +117,42 @@ const page = async ({ params }: Props) => {
       <Card className="bg-muted/40 text-foreground">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="border border-foreground/20 rounded-md p-4">
-              <h3 className="text-lg font-semibold mb-2">Gallery</h3>
-              <p className="text-sm">Please sign in to view the images.</p>
+            <div className="border-foreground/20 rounded-md overflow-hidden">
+              <h3 className="text-lg font-semibold mb-2">{project?.projectName}</h3>
+              {latestDeployment?.deploymentStatus === "READY" ? (
+                <div className="relative w-full h-64 border border-foreground/20 rounded-md overflow-hidden">
+                  <a
+                    href={`http://${project?.subdomain}.localhost:8001`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute top-0 left-0 w-full h-full"
+                    style={{ zIndex: 10 }}
+                  >
+                    <span className="sr-only">Open in new tab</span>
+                  </a>
+                  <iframe
+                    src={`http://${project?.subdomain}.localhost:8001`}
+                    title="Embedded Webpage"
+                    className="absolute top-0 left-0 w-full h-full border-none pointer-events-none"
+                    sandbox="allow-scripts allow-same-origin"
+                    style={{
+                      transform: "scale(0.4)", 
+                      transformOrigin: "0 0", 
+                      width: "250%", 
+                      height: "250%", 
+                    }}
+                  ></iframe>
+                </div>
+              ) : (
+                <a href={`http://${project?.subdomain}.localhost:8001`} target="_blank" rel="noopener noreferrer">
+                  <AspectRatio
+                    ratio={16 / 9}
+                    className="w-full border border-foreground/20 rounded-md bg-gray-100 flex items-center justify-center cursor-pointer"
+                  >
+                    <p className="text-sm text-gray-500">Deployment not ready</p>
+                  </AspectRatio>
+                </a>
+              )}
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-2">Deployment</h3>

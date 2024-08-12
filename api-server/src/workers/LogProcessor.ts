@@ -2,6 +2,8 @@ import { Consumer, EachBatchPayload } from "kafkajs";
 import { ClickHouseService } from "../clients/ClickHouseClient";
 import { KafkaService } from "../clients/KafkaClient";
 import logger from "../utils/logger";
+import { DeploymentStatus } from "@prisma/client";
+import { updateDeploymentStatus } from "../utils/deployment/deploymentUtils";
 
 interface LogMessage {
     log: string;
@@ -33,17 +35,25 @@ export class LogProcessor {
                     const messages = batch.messages;
                     logger.info(`Received: ${messages.length} messages`);
 
+                    let deploymentId: string | undefined;
+                    logger.info(`Deployment ID: ${deploymentId}`);
+
                     for (const message of batch.messages) {
                         if (!message.value) continue;
                         try {
                             //Retrieve individual message
                             const individualMessage = message.value.toString();
                             const { log, DEPLOYMENT_ID }: LogMessage = JSON.parse(individualMessage);
-                            logger.debug(`Received log: ${log}`);
+                            logger.info(`Received log: ${log}`);
 
                             //push individual log to ClickHouseDB
                             const query_id = await this.clickHouseService.insertLog(DEPLOYMENT_ID, log);
-                            logger.debug('query_id', query_id);
+                            logger.info('query_id', query_id);
+
+                            //Check for successful deployment
+                            if (log === 'Deployed to S3') {
+                                await updateDeploymentStatus(DEPLOYMENT_ID, DeploymentStatus.READY);
+                            }
 
                             resolveOffset(message.offset); //marks a message as processed
                             await commitOffsetsIfNecessary(); //checks if autoCommitInterval or threshold has been reached and commits the offsets if necessary
@@ -51,6 +61,9 @@ export class LogProcessor {
 
                         } catch (error) {
                             logger.error('Error processing message:', error);
+                            if (deploymentId) {
+                                await updateDeploymentStatus(deploymentId, DeploymentStatus.FAILED);
+                            }
                         }
                     }
                 }
