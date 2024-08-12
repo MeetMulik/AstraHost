@@ -37,7 +37,7 @@ model Deployments {
   deploymentId          String           @id @default(cuid())
   deploymentDescription String?          @map("deployment_description")
   projectId             String
-  project               Projects         @relation(fields: [projectId], references: [projectId])
+  project               Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade)
   deploymentUrl         String?          @map("deployment_url")
   deploymentStatus      DeploymentStatus @default(NOT_STARTED) @map("deployment_status")
   createdAt             DateTime         @default(now())
