@@ -36,7 +36,7 @@ const page = async ({ params }: Props) => {
             </Button>
           </Link>
           {latestDeployment ? (
-            <Link href={`http://${project?.subdomain}.localhost:8000`}>
+            <Link href={`http://${project?.subdomain}.localhost:8001`}>
               <Button variant="default">
                 <ArrowUpRight className="h-4 w-4 mr-2" />
                 Visit
@@ -62,7 +62,7 @@ const page = async ({ params }: Props) => {
                 </DropdownMenuItem>
               </Link>
               {latestDeployment ? (
-                <Link href={`http://${project?.subdomain}.localhost:8000`} passHref>
+                <Link href={`http://${project?.subdomain}.localhost:8001`} passHref>
                   <DropdownMenuItem>
                     Visit
                     <ArrowUpRight className="h-4 w-4 ml-1" />
@@ -128,7 +128,7 @@ const page = async ({ params }: Props) => {
 
               <h4 className="text-sm font-semibold mt-4 mb-2">Domains</h4>
               {latestDeployment ? (
-                <Link href={`http://${project?.subdomain}.localhost:8000`}>
+                <Link href={`http://${project?.subdomain}.localhost:8001`}>
                   <p className="text-sm flex items-center">
                     <span className="border-b-2 border-white">{project?.subdomain || ""}</span>
                     <ArrowUpRight className="h-4 w-4 ml-2" />
