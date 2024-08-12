@@ -6,9 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowUpRight, ChevronDown, EllipsisIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
+import React from "react";
 import { formatDistanceToNow } from "date-fns";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   params: {
@@ -79,6 +80,7 @@ const page = async ({ params }: Props) => {
           </DropdownMenu>
         </div>
       </div>
+      <Separator />
 
       <div className="flex justify-between items-center">
         <div>
@@ -90,9 +92,7 @@ const page = async ({ params }: Props) => {
             <Link href={`/dashboard/projects/${params.projectId}/deployments/${latestDeployment?.deploymentId}`}>Build Logs</Link>
           </Button>
           <Button variant="outline">
-            <Suspense fallback={<h1>Fetching data...</h1>}>
-              <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
-            </Suspense>
+            <Link href={`/dashboard/projects/${project?.projectId}/deployments`}>View Previous Deployments</Link>
           </Button>
           <DeployButton latestDeployment={latestDeployment} projectId={params.projectId} />
         </div>
@@ -136,10 +136,10 @@ const page = async ({ params }: Props) => {
                     className="absolute top-0 left-0 w-full h-full border-none pointer-events-none"
                     sandbox="allow-scripts allow-same-origin"
                     style={{
-                      transform: "scale(0.4)", 
-                      transformOrigin: "0 0", 
-                      width: "250%", 
-                      height: "250%", 
+                      transform: "scale(0.4)",
+                      transformOrigin: "0 0",
+                      width: "250%",
+                      height: "250%",
                     }}
                   ></iframe>
                 </div>
@@ -174,7 +174,21 @@ const page = async ({ params }: Props) => {
               <h4 className="text-sm font-semibold mt-4">Deployment Status</h4>
               {latestDeployment ? (
                 <div className="mt-2 flex items-center">
-                  <span className="bg-green-500 rounded-full h-2 w-2 mr-2"></span>
+                  <span
+                    className={`rounded-full h-2 w-2 mr-2 ${
+                      latestDeployment.deploymentStatus === "READY"
+                        ? "bg-green-500"
+                        : latestDeployment.deploymentStatus === "IN_PROGRESS"
+                        ? "bg-blue-500"
+                        : latestDeployment.deploymentStatus === "QUEUED"
+                        ? "bg-yellow-500"
+                        : latestDeployment.deploymentStatus === "FAILED"
+                        ? "bg-red-500"
+                        : latestDeployment.deploymentStatus === "NOT_STARTED"
+                        ? "bg-gray-500"
+                        : "bg-gray-300"
+                    }`}
+                  ></span>
                   <span className="text-sm font-semibold">{latestDeployment.deploymentStatus}</span>
                   <span className="text-sm text-foreground/60 ml-2">{`${timeAgo} by Name`}</span>
                 </div>

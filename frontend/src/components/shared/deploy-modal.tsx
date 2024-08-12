@@ -52,7 +52,7 @@ export function DeployButton({ latestDeployment, projectId }: { latestDeployment
         success: (deploymentData) => {
           setIsDialogOpen(false);
           form.reset();
-          return `Deployment successful!`;
+          return `Deployment queued!`;
         },
         error: (error) => {
           console.error("Error during deployment:", error);
