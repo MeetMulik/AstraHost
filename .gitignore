@@ -96,3 +96,7 @@ Thumbs.db
 dist
 .env
 *.log
+
+**/config/
+*/config/
+website-build-server/src/config/index.ts
