@@ -16,6 +16,7 @@
     "@clickhouse/client": "^1.4.1",
     "@prisma/client": "^5.17.0",
     "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "kafkajs": "^2.2.4",

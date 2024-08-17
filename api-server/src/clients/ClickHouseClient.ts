@@ -46,18 +46,129 @@ export class ClickHouseService {
         try {
             const formattedAnalyticsData = {
                 ...analyticsData,
-                timestamp: new Date(analyticsData.timestamp).toISOString().replace('Z', ''), 
+                timestamp: new Date(analyticsData.timestamp).toISOString().replace('Z', ''),
             };
-    
+
             const { query_id } = await this.client.insert({
                 table: 'analytics_data',
                 values: [formattedAnalyticsData],
                 format: 'JSONEachRow',
             });
-    
+
             return query_id;
         } catch (error) {
             logger.error('Error inserting analytics data to ClickHouse:', error);
+            throw error;
+        }
+    }
+
+    async getProjectAnalytics(projectId: string, startDate: string, endDate: string) {
+        try {
+            const query = `
+                SELECT *
+                FROM analytics_data
+                WHERE project_id = {projectId:String}
+                    AND timestamp BETWEEN {startDate:DateTime} AND {endDate:DateTime}
+                ORDER BY timestamp
+            `;
+            const result = await this.client.query({
+                query,
+                format: 'JSONEachRow',
+                query_params: {
+                    projectId,
+                    startDate,
+                    endDate,
+                },
+            });
+            return result.json();
+        } catch (error) {
+            logger.error('Error retrieving project analytics from ClickHouse:', error);
+            throw error;
+        }
+    }
+
+    async getDailyVisitorCount(projectId: string): Promise<{ date: string; daily_visitors: number }[]> {
+        try {
+            const result = await this.client.query({
+                query: `
+                    SELECT toDate(timestamp) AS date, count(DISTINCT ip_address) AS daily_visitors
+                    FROM analytics_data
+                    WHERE project_id = {project_id:String}
+                    GROUP BY date
+                    ORDER BY date DESC
+                `,
+                query_params: { project_id: projectId },
+                format: 'JSONEachRow',
+            });
+
+            const response: { date: string; daily_visitors: number }[] = await result.json();
+            return response;
+        } catch (error) {
+            logger.error('Error fetching daily visitor count from ClickHouse:', error);
+            throw error;
+        }
+    }
+
+    async getTotalVisits(projectId: string): Promise<{ total_visits: number }> {
+        try {
+            const result = await this.client.query({
+                query: `
+                    SELECT count(*) AS total_visits
+                    FROM analytics_data
+                    WHERE project_id = {project_id:String}
+                `,
+                query_params: { project_id: projectId },
+                format: 'JSONEachRow',
+            });
+
+            const [response]: { total_visits: number }[] = await result.json();
+            return response;
+        } catch (error) {
+            logger.error('Error fetching total visits from ClickHouse:', error);
+            throw error;
+        }
+    }
+
+    async getUrlWiseViews(projectId: string): Promise<{ url: string; views: number }[]> {
+        try {
+            const result = await this.client.query({
+                query: `
+                    SELECT url, count(*) AS views
+                    FROM analytics_data
+                    WHERE project_id = {project_id:String}
+                    GROUP BY url
+                    ORDER BY views DESC
+                `,
+                query_params: { project_id: projectId },
+                format: 'JSONEachRow',
+            });
+
+            const response: { url: string; views: number }[] = await result.json();
+            return response;
+        } catch (error) {
+            logger.error('Error fetching URL-wise views from ClickHouse:', error);
+            throw error;
+        }
+    }
+
+    async getBrowserStats(projectId: string): Promise<{ browser: string; usage_count: number }[]> {
+        try {
+            const result = await this.client.query({
+                query: `
+                    SELECT browser, count(*) AS usage_count
+                    FROM analytics_data
+                    WHERE project_id = {project_id:String}
+                    GROUP BY browser
+                    ORDER BY usage_count DESC
+                `,
+                query_params: { project_id: projectId },
+                format: 'JSONEachRow',
+            });
+
+            const response: { browser: string; usage_count: number }[] = await result.json();
+            return response;
+        } catch (error) {
+            logger.error('Error fetching browser stats from ClickHouse:', error);
             throw error;
         }
     }
