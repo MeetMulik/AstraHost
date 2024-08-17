@@ -10,6 +10,8 @@ import React from "react";
 import { formatDistanceToNow } from "date-fns";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
+import { auth } from "@/auth";
+import DeploymentStatusPoller from "../_components/deployment-status-poller";
 
 type Props = {
   params: {
@@ -24,8 +26,15 @@ const page = async ({ params }: Props) => {
   const updatedAt = latestDeployment?.updatedAt;
   const timeAgo = updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : "Unknown time";
 
+  const session = await auth();
+  console.log('session', session)
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      {latestDeployment && (latestDeployment.deploymentStatus === "IN_PROGRESS" || latestDeployment.deploymentStatus === "QUEUED") && (
+        <DeploymentStatusPoller projectId={params.projectId} initialStatus={latestDeployment.deploymentStatus} />
+      )}
+
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-lg font-semibold md:text-3xl text-foreground">{`${project?.projectName}`}</h1>
@@ -190,7 +199,7 @@ const page = async ({ params }: Props) => {
                     }`}
                   ></span>
                   <span className="text-sm font-semibold">{latestDeployment.deploymentStatus}</span>
-                  <span className="text-sm text-foreground/60 ml-2">{`${timeAgo} by Name`}</span>
+                  <span className="text-sm text-foreground/60 ml-2">{`${timeAgo} by ${session?.user?.name}`}</span>
                 </div>
               ) : (
                 <p className="mt-2 text-sm text-foreground/60">No deployment status available</p>
