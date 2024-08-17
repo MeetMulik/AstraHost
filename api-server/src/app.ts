@@ -7,6 +7,7 @@ import cors from 'cors';
 import { KafkaService } from './clients/KafkaClient';
 import { ClickHouseService } from './clients/ClickHouseClient';
 import { LogProcessor } from './workers/LogProcessor';
+import { AnalyticsProcessor } from './workers/AnalyticsProcessor';
 
 dotenv.config();
 
@@ -22,10 +23,13 @@ app.use((req, res, next) => {
 const kafkaService = KafkaService.getInstance();
 const clickHouseService = ClickHouseService.getInstance();
 const logProcessor = new LogProcessor(kafkaService, clickHouseService);
+const analyticsProcessor = new AnalyticsProcessor(kafkaService, clickHouseService);
 
 app.set('kafkaService', kafkaService);
 app.set('clickHouseService', clickHouseService);
 app.set('logProcessor', logProcessor);
+app.set('analyticsProcessor', analyticsProcessor);
+
 
 
 app.use('/', indexRouter);

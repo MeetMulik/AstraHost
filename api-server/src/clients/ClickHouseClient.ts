@@ -1,6 +1,7 @@
 import { ClickHouseClient, createClient } from '@clickhouse/client';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../utils/logger';
+import { AnalyticsData } from '../workers/AnalyticsProcessor';
 
 export class ClickHouseService {
     private static instance: ClickHouseService;
@@ -37,6 +38,26 @@ export class ClickHouseService {
             return query_id;
         } catch (error) {
             logger.error('Error inserting log to ClickHouse:', error);
+            throw error;
+        }
+    }
+
+    async insertAnalytics(analyticsData: AnalyticsData): Promise<string> {
+        try {
+            const formattedAnalyticsData = {
+                ...analyticsData,
+                timestamp: new Date(analyticsData.timestamp).toISOString().replace('Z', ''), 
+            };
+    
+            const { query_id } = await this.client.insert({
+                table: 'analytics_data',
+                values: [formattedAnalyticsData],
+                format: 'JSONEachRow',
+            });
+    
+            return query_id;
+        } catch (error) {
+            logger.error('Error inserting analytics data to ClickHouse:', error);
             throw error;
         }
     }
