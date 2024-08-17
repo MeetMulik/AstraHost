@@ -2,9 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 import httpProxy from 'http-proxy';
 import { PrismaClient } from '@prisma/client';
+import { RedisService } from '../clients/RedisClient';
+import { AnalyticsCollector } from '../services/AnalyticsService';
 
 const proxy = httpProxy.createProxy();
 const prisma = new PrismaClient();
+const redisService = RedisService.getInstance();
+const redisClient = redisService.getRedisClient();
+const analyticsCollector = new AnalyticsCollector(redisClient);
 
 const BASE_PATH = "https://ast-storage.s3.ap-south-1.amazonaws.com/__outputs";
 
@@ -23,13 +28,16 @@ const proxyMiddleware = async (req: Request, res: Response, next: NextFunction):
         logger.debug(subdomain);
 
         const project = await prisma.projects.findFirst({
-            where:{
-                sub_domain:subdomain
+            where: {
+                sub_domain: subdomain
             }
         })
 
         const resolvesTo = `${BASE_PATH}/${project?.projectId}`;
         console.log('Proxying request to:', resolvesTo);
+
+        const analyticsData = await analyticsCollector.collectAnalyticsData(req, project?.projectId);
+        console.log('analyticsData', analyticsData);
 
         proxy.web(req, res, { target: resolvesTo, changeOrigin: true }, (error) => {
             if (error) {
