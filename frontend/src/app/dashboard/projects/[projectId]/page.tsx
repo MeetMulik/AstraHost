@@ -179,7 +179,7 @@ const page = async ({ params }: Props) => {
                       latestDeployment.deploymentStatus === "READY"
                         ? "bg-green-500"
                         : latestDeployment.deploymentStatus === "IN_PROGRESS"
-                        ? "bg-blue-500"
+                        ? "bg-blue-500 animate-blink"
                         : latestDeployment.deploymentStatus === "QUEUED"
                         ? "bg-yellow-500"
                         : latestDeployment.deploymentStatus === "FAILED"

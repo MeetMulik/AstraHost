@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { Logs } from "lucide-react";
 import { getLogs, Log } from "@/actions/log-actions";
+import { LoadingSpinner } from "@/components/shared/loading-spinner";
 
 type Props = {
   params: {
@@ -42,7 +43,9 @@ const BuildLogs = async ({ deploymentId }: { deploymentId: string }) => {
           </div>
           {logs.map((log) => (
             <div key={log.event_id} className="flex">
-              <span className="text-foreground mr-4">{new Date(log.timestamp).toLocaleTimeString()}</span>
+              <span className="text-foreground mr-4">
+                {new Date(new Date(log.timestamp).getTime() + 5.5 * 60 * 60 * 1000).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })}
+              </span>
               <span>{log.log}</span>
             </div>
           ))}
@@ -55,7 +58,9 @@ const BuildLogs = async ({ deploymentId }: { deploymentId: string }) => {
 const Page = ({ params }: Props) => {
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <BuildLogs deploymentId={params.deploymentId} />
+      <Suspense fallback={<LoadingSpinner />}>
+        <BuildLogs deploymentId={params.deploymentId} />
+      </Suspense>
     </main>
   );
 };
