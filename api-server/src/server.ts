@@ -14,7 +14,7 @@ async function startServer() {
             logger.info(`Server is running at http://localhost:${port}`);
         });
 
-        // await logProcessor.start();
+        await logProcessor.start();
         await analyticsProcessor.start();
 
         process.on('SIGTERM', async () => {
