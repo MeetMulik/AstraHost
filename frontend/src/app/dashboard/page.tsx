@@ -1,3 +1,4 @@
+import { getTotalViews } from "@/actions/analytics-actions";
 import { getProjects } from "@/actions/project-actions";
 import ProjectsTab from "@/components/dashboard/projects-tab";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,8 @@ type Props = {};
 
 const Page = async (props: Props) => {
   const projects = await getProjects();
-
+  const totalViews = await getTotalViews();
+  console.log('totalViews', totalViews)
   return (
     <main className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
@@ -40,7 +42,7 @@ const Page = async (props: Props) => {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Views</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -57,7 +59,7 @@ const Page = async (props: Props) => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">+2350</div>
+                <div className="text-2xl font-bold">+{totalViews?.count}</div>
                 <p className="text-xs text-muted-foreground">+180.1% from last month</p>
               </CardContent>
             </Card>

@@ -65,4 +65,13 @@ export class AnalyticsController {
         }
     }
 
+    getTotalViews = async (req: Request, res: Response) => {
+        try {
+            const { projectId } = req.params;
+            const browserStats = await this.clickHouseService.getTotalViews();
+            res.status(200).json(browserStats);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to retrieve browser statistics' });
+        }
+    }
 }

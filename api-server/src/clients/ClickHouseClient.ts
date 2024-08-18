@@ -200,7 +200,7 @@ export class ClickHouseService {
                 query_params: { project_id: projectId },
                 format: 'JSONEachRow',
             });
-    
+
             const response: { timestamp: string; processing_time: number }[] = await result.json();
             return response;
         } catch (error) {
@@ -208,6 +208,20 @@ export class ClickHouseService {
             throw error;
         }
     }
-    
 
+    async getTotalViews() {
+        try {
+            const result = await this.client.query({
+                query: `
+                    SELECT COUNT(*) AS count from analytics_data
+                `,
+                format: 'JSONEachRow',
+            })
+            const response: { timestamp: string; processing_time: number }[] = await result.json();
+            return response;
+        } catch (error) {
+            logger.error('Error fetching processing times from ClickHouse:', error);
+            throw error;
+        }
+    }
 }
