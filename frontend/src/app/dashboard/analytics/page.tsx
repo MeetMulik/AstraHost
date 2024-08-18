@@ -1,31 +1,21 @@
-import AreaChartCard from "@/components/charts/area-chart-card";
-import { Button } from "@/components/ui/button";
 import React from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+import { getProjects } from "@/actions/project-actions";
+import AnalyticsContent from "./_components/analytics-content";
 
-type Props = {};
+type Props = {
+  searchParams: { projectId?: string };
+};
 
-const page = (props: Props) => {
+const Page = async ({ searchParams }: Props) => {
+  const projects = await getProjects();
+  const defaultProjectId = projects[0]?.projectId || "";
+  const initialProjectId = searchParams.projectId || defaultProjectId;
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold md:text-2xl">Analytics</h1>
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select project" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="project1">Project 1</SelectItem>
-            <SelectItem value="project2">Project 2</SelectItem>
-            <SelectItem value="project3">Project 3</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <Separator />
-      <AreaChartCard />
+      <AnalyticsContent projects={projects} initialProjectId={initialProjectId} />
     </main>
   );
 };
 
-export default page;
+export default Page;

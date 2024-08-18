@@ -91,11 +91,18 @@ export class ClickHouseService {
         try {
             const result = await this.client.query({
                 query: `
-                    SELECT toDate(timestamp) AS date, count(DISTINCT ip_address) AS daily_visitors
-                    FROM analytics_data
-                    WHERE project_id = {project_id:String}
-                    GROUP BY date
-                    ORDER BY date DESC
+                    SELECT 
+                        toDate(timestamp) AS date, 
+                        os, 
+                        count(DISTINCT ip_address) AS daily_visitors
+                    FROM 
+                        analytics_data
+                    WHERE 
+                        project_id = {project_id:String}
+                    GROUP BY 
+                        date, os
+                    ORDER BY 
+                        date DESC
                 `,
                 query_params: { project_id: projectId },
                 format: 'JSONEachRow',

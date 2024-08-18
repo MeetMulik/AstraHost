@@ -16,6 +16,6 @@ export const LoadingSpinner = ({ className }: { className?: string }) => (
     >
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
-    <p className="text-sm text-gray-500 animate-pulse">Loading logs...</p>
+    <p className="text-sm text-gray-500 animate-pulse">Loading...</p>
   </div>
 );
