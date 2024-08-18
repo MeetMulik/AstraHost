@@ -1,23 +1,21 @@
-import { Button } from "@/components/ui/button";
 import React from "react";
+import { getProjects } from "@/actions/project-actions";
+import AnalyticsContent from "./_components/analytics-content";
 
-type Props = {};
+type Props = {
+  searchParams: { projectId?: string };
+};
 
-const page = (props: Props) => {
+const Page = async ({ searchParams }: Props) => {
+  const projects = await getProjects();
+  const defaultProjectId = projects[0]?.projectId || "";
+  const initialProjectId = searchParams.projectId || defaultProjectId;
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Analytics</h1>
-      </div>
-      <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1">
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h3 className="text-2xl font-bold tracking-tight">You have no products</h3>
-          <p className="text-sm text-muted-foreground">You can start selling as soon as you add a product.</p>
-          <Button className="mt-4">Add Product</Button>
-        </div>
-      </div>
+      <AnalyticsContent projects={projects} initialProjectId={initialProjectId} />
     </main>
   );
 };
 
-export default page;
+export default Page;
