@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import proxyMiddleware from './middleware/proxyMiddleware';
 import logger from './utils/logger';
 import { KafkaProducerService } from './clients/KafkaClient';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -15,6 +16,10 @@ async function startServer() {
         await kafkaProducer.connect();
         logger.info('Kafka producer connected successfully');
 
+        app.use(cors({
+            origin: '*',            
+            allowedHeaders: '*'
+        }));
         app.use(proxyMiddleware);
 
         const server = app.listen(PORT, () => {

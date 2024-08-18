@@ -1,12 +1,17 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getProjects } from "@/actions/project-actions";
+import ProjectsTab from "@/components/dashboard/projects-tab";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Globe } from "lucide-react";
 
-import React from "react"
+import React from "react";
 
-type Props = {}
+type Props = {};
 
-const Page = (props: Props) => {
+const Page = async (props: Props) => {
+  const projects = await getProjects();
+
   return (
     <main className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
@@ -25,34 +30,17 @@ const Page = (props: Props) => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Projects
-                </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
+                <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                <Globe />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">$45,231.89</div>
-                <p className="text-xs text-muted-foreground">
-                  +20.1% from last month
-                </p>
+                <div className="text-2xl font-bold">{projects.length}</div>
+                <p className="text-xs text-muted-foreground">+5.1% from last month</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Views
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Views</CardTitle>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -70,32 +58,23 @@ const Page = (props: Props) => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+2350</div>
-                <p className="text-xs text-muted-foreground">
-                  +180.1% from last month
-                </p>
+                <p className="text-xs text-muted-foreground">+180.1% from last month</p>
               </CardContent>
             </Card>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
             <Card className="col-span-4">
               <CardHeader>
                 <CardTitle>Overview</CardTitle>
+                <ProjectsTab projects={projects} />
               </CardHeader>
-              <CardContent className="pl-2">
-              </CardContent>
-            </Card>
-            <Card className="col-span-3">
-              <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-                <CardContent>
-                </CardContent>
-              </CardHeader>
+              <CardContent className="pl-2"></CardContent>
             </Card>
           </div>
         </TabsContent>
       </Tabs>
     </main>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;
