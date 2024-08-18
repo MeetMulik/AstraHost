@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Project } from "@/actions/project-actions";
 import AreaChartCard from "@/components/charts/area-chart-card";
 import { Separator } from "@/components/ui/separator";
-import { VisitorChart } from "./visitor-chart.card";
-import { BrowserChart } from "./browser-chart-card";
-import { FileAnalyticsCard } from "./file-analytics-card";
-import { ProcessingTimeCard } from "./processing-time-card";
+import VisitorChart from "./visitor-chart.card";
+import BrowserChart from "./browser-chart-card";
+import FileAnalyticsCard from "./file-analytics-card";
+import ProcessingTimeCard from "./processing-time-card";
 import ProjectSelector from "./project-selector";
 
 type Props = {
@@ -22,7 +22,7 @@ const AnalyticsContent = ({ projects, initialProjectId }: Props) => {
   const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId);
 
   useEffect(() => {
-    const projectId = searchParams.get('projectId');
+    const projectId = searchParams.get("projectId");
     if (projectId) {
       setSelectedProjectId(projectId);
     }
@@ -37,11 +37,7 @@ const AnalyticsContent = ({ projects, initialProjectId }: Props) => {
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Analytics</h1>
-        <ProjectSelector 
-          projects={projects} 
-          selectedProjectId={selectedProjectId} 
-          onProjectChange={handleProjectChange}
-        />
+        <ProjectSelector projects={projects} selectedProjectId={selectedProjectId} onProjectChange={handleProjectChange} />
       </div>
       <Separator />
       <AreaChartCard projectId={selectedProjectId} />

@@ -41,7 +41,7 @@ const chartConfig: ChartConfig = {
   },
 };
 
-export function BrowserChart({ projectId }: { projectId: string }) {
+export default function BrowserChart({ projectId }: { projectId: string }) {
   const [browserStats, setBrowserStats] = useState<BrowserStat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

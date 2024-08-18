@@ -179,4 +179,35 @@ export class ClickHouseService {
             throw error;
         }
     }
+
+    async getProcessingStats(projectId: string): Promise<{ timestamp: string; processing_time: number }[]> {
+        try {
+            const result = await this.client.query({
+                query: `
+                    SELECT timestamp, processing_time
+                    FROM (
+                        SELECT 
+                            timestamp, 
+                            processing_time, 
+                            row_number() OVER (ORDER BY timestamp DESC) AS row_num
+                        FROM analytics_data
+                        WHERE project_id = {project_id:String}
+                    )
+                    WHERE row_num % 10 = 1
+                    ORDER BY timestamp DESC
+                    LIMIT 10
+                `,
+                query_params: { project_id: projectId },
+                format: 'JSONEachRow',
+            });
+    
+            const response: { timestamp: string; processing_time: number }[] = await result.json();
+            return response;
+        } catch (error) {
+            logger.error('Error fetching processing times from ClickHouse:', error);
+            throw error;
+        }
+    }
+    
+
 }

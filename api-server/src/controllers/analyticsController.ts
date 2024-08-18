@@ -55,5 +55,14 @@ export class AnalyticsController {
         }
     };
 
+    getProcessingStats = async (req: Request, res: Response) => {
+        try {
+            const { projectId } = req.params;
+            const browserStats = await this.clickHouseService.getProcessingStats(projectId);
+            res.status(200).json(browserStats);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to retrieve browser statistics' });
+        }
+    }
 
 }

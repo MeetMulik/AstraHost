@@ -14,7 +14,7 @@ interface UrlView {
   views: string;
 }
 
-export function FileAnalyticsCard({ projectId }: { projectId: string }) {
+export default function FileAnalyticsCard({ projectId }: { projectId: string }) {
   const [chartData, setChartData] = useState<UrlView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

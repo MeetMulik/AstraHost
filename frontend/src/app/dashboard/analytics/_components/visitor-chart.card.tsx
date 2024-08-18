@@ -20,7 +20,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function VisitorChart({ projectId }: { projectId: string }) {
+export default function VisitorChart({ projectId }: { projectId: string }) {
   const [totalVisits, setTotalVisits] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

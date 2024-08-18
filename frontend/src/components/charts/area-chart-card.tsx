@@ -65,7 +65,7 @@ export default function AreaChartCard({ projectId }: { projectId: string }) {
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Daily Visitors</CardTitle>
+          <CardTitle>Daily Unique Visitors</CardTitle>
           <CardDescription>Showing total daily visitors </CardDescription>
         </div>
       </CardHeader>

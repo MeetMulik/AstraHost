@@ -11,5 +11,6 @@ analyticsRouter.get('/daily-visitors/:projectId', analyticsController.getDailyVi
 analyticsRouter.get('/total-visits/:projectId', analyticsController.getTotalVisits);
 analyticsRouter.get('/url-views/:projectId', analyticsController.getUrlWiseViews);
 analyticsRouter.get('/browser-stats/:projectId', analyticsController.getBrowserStats);
+analyticsRouter.get('/processing-stats/:projectId', analyticsController.getProcessingStats);
 
 export default analyticsRouter;
