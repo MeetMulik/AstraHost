@@ -33,6 +33,9 @@ const Header = async (props: Props) => {
         <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
           Contact
         </Link>
+        <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          Dashboard
+        </Link>
         <ModeToggle />
         {session && (
           <DropdownMenu>
